@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "VOTEX",
+    "slug": "votacionApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/ic_launcher.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aplicaciontesis.votacionApp"
+    },
+    "android": {
+      "package": "com.aplicaciontesis.votacionApp",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/ic_launcher.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a0f429c9-9242-464b-9ede-aba7fd34dd78"
+      }
+    }
+  }
+}
