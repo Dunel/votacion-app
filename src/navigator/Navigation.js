@@ -11,7 +11,6 @@ import RegisterVoterScreen from "../screens/RegisterVoterScreen";
 import UpdateVoterScreen from "../screens/UpdateVoterScreen";
 import RegisterElectionScreen from "../screens/RegisteElectionScreen";
 import UpdateElectionScreen from "../screens/UpdateElectionScreen";
-import DeleteElectionScreen from "../screens/DeleteElectionScreen";
 import PostulationScreen from "../screens/PostulationScreen";
 import PostulationsRegisterScreen from "../screens/PostulationsRegisterScreen";
 import RegisteredVoteScreen from "../screens/RegisterVoteFinishScreen";
@@ -21,6 +20,8 @@ import PasswordRecoveryScreen from "../screens/PasswordRecoveryScreen";
 import ElectionResultsScreen from "../screens/ElectionResultsScreen";
 import ElectionResultsAdminScreen from "../screens/ElectionResultsAdminScreen";
 import LogoTitle from "../components/logoTitle";
+import ElectorsScreen from "../screens/electorsScreen";
+import LogsScreen from "../screens/LogsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -70,7 +71,7 @@ const Navigation = () => {
                     fontWeight: "bold",
                     fontSize: 15,
                   },
-                  headerShown: false
+                  headerShown: false,
                 }}
               />
               <Stack.Screen
@@ -111,17 +112,6 @@ const Navigation = () => {
                 component={UpdateElectionScreen}
                 options={{
                   title: "MODIFICAR ELECCIÓN",
-                  headerTitleStyle: {
-                    fontWeight: "bold",
-                    fontSize: 15,
-                  },
-                }}
-              />
-              <Stack.Screen
-                name="DeleteElectionScreen"
-                component={DeleteElectionScreen}
-                options={{
-                  title: "ELIMINAR ELECCIÓN",
                   headerTitleStyle: {
                     fontWeight: "bold",
                     fontSize: 15,
@@ -194,6 +184,28 @@ const Navigation = () => {
                   },
                 }}
               />
+              <Stack.Screen
+                name="ElectorsScreen"
+                component={ElectorsScreen}
+                options={{
+                  title: "Electores Inscritos",
+                  headerTitleStyle: {
+                    fontWeight: "bold",
+                    fontSize: 15,
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="LogsScreen"
+                component={LogsScreen}
+                options={{
+                  title: "SEGURIDAD",
+                  headerTitleStyle: {
+                    fontWeight: "bold",
+                    fontSize: 15,
+                  },
+                }}
+              />
             </>
           ) : (
             <>
@@ -201,7 +213,7 @@ const Navigation = () => {
                 name="HomeScreen"
                 component={HomeScreen}
                 options={{
-                  title: "ELECCIONES",
+                  headerTitle: () => <LogoTitle />,
                   headerTitleStyle: {
                     fontWeight: "bold",
                     fontSize: 15,
@@ -217,7 +229,7 @@ const Navigation = () => {
                     fontWeight: "bold",
                     fontSize: 15,
                   },
-                  headerShown: false
+                  headerShown: false,
                 }}
               />
               <Stack.Screen

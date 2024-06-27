@@ -55,7 +55,11 @@ const ElectionResultsScreen = () => {
           },
         }
       );
-      fetchElectorsCount({ type: res.data.type, typeId: res.data.typeId });
+      fetchElectorsCount({
+        type: res.data.type,
+        typeId: res.data.typeId,
+        roleElection: res.data.roleElection,
+      });
       setData(res.data);
 
       let maxVotes = 0;
@@ -114,9 +118,9 @@ const ElectionResultsScreen = () => {
         </View>
         <View style={styles.textContainer}>
           <View style={styles.WinnerContainer}>
-          <Text style={[styles.candidateName, isWinner && styles.winner]}>
-            {item.name}
-          </Text>
+            <Text style={[styles.candidateName, isWinner && styles.winner]}>
+              {item.name}
+            </Text>
             {isWinner && <Text>⭐</Text>}
           </View>
           <Text style={styles.candidateVotes}>Votos: {item._count.votes}</Text>

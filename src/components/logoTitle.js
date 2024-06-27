@@ -1,25 +1,28 @@
-import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import React from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 const LogoTitle = () => {
   return (
-    <View style={styles.container}>
-    <Image
-      style={styles.logo}
-      source={require('../../assets/ic_launcher.png')}
-    />
-    </View>
+    < >
+      <Image
+        style={styles.logo}
+        source={require("../../assets/playstore.png")}
+      />
+      <Text style={styles.text}>INICIO</Text>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   logo: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
   },
-  container: {
+  text: {
     flex: 1,
-    alignItems: "center",
+    fontWeight: "bold",
+    fontSize: 18,
+    padding: 15
   },
 });
 

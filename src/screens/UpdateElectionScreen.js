@@ -48,6 +48,7 @@ const UpdateElectionScreen = () => {
     setValue("title", item.title);
     setValue("description", item.description ? item.description : "");
     setValue("active", item.active);
+    setValue("roleElection", item.roleElection)
     setValue("type", item.type);
     handlePlaceTypeChange(item.type);
     setStartDate(item.startDate);
@@ -93,16 +94,24 @@ const UpdateElectionScreen = () => {
         }
       );
       fetchElections();
-      Alert.alert(
-        "ELECCIÓN ELIMINADA",
-        ""
-      );
+      Alert.alert("ELECCIÓN ELIMINADA", "");
     } catch (error) {
       console.error(error.response.data);
     }
   };
 
   const onConfirmRange = (output) => {
+    const currentDate = new Date();
+    if (
+      new Date(output.startDate) < currentDate ||
+      new Date(output.endDate) < currentDate
+    ) {
+      Alert.alert(
+        "Error de fecha",
+        "Las fechas seleccionadas deben ser posteriores a la fecha actual."
+      );
+      return;
+    }
     setShowDatePickerRange(false);
     setStartDate(output.startDate);
     setEndDate(output.endDate);
@@ -129,13 +138,10 @@ const UpdateElectionScreen = () => {
         }
       );
       //console.log(res.data);
-      Alert.alert(
-        "ELECCIÓN MODIFICADA",
-        ""
-      );
+      Alert.alert("ELECCIÓN MODIFICADA", "");
       fetchElections();
     } catch (error) {
-      console.error("Error al actualizar elección:", error.response.data);
+      console.error("Error al actualizar elección:", error.response);
       Alert.alert("Error", "Ocurrió un error al actualizar la elección.");
     }
   };
@@ -256,14 +262,14 @@ const UpdateElectionScreen = () => {
             ).toLocaleDateString()}`}
         </Text>
         <CustomSelect
-          name="active"
           control={control}
-          rules={{ required: "Se requiere este campo" }}
+          name="roleElection"
+          rules={{ required: "Este campo es requerido." }}
           items={[
-            { label: "Activa", value: "active" },
-            { label: "Inactiva", value: "inactive" },
+            { label: "Normal", value: "normal" },
+            { label: "Especial", value: "especial" },
           ]}
-          placeholder="Estado de la elección"
+          placeholder="Tipo de elección"
         />
         <CustomSelect
           name="type"

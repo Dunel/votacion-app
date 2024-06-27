@@ -8,20 +8,31 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import CustomInputNat from "../components/customInputNat";
+import { useErrorHandling } from "../hooks/useErrorHandling";
 
 const passwordRegex =
   /^(?=.*[A-Z])(?=.*\d)(?=.*[@#$%&*./=\\])[A-Za-z\d@#$%&*./=\\]{8,}$/;
 const cedulaRegex = /^[0-9]+$/;
 
 const RegisterVoterScreen = () => {
-  const { userInfo, setIsLoading } = useContext(AuthContext);
+  const { handleError } = useErrorHandling();
+  const { userInfo } = useContext(AuthContext);
   const navigation = useNavigation();
-  const { handleSubmit, control, watch, setValue } = useForm();
+  const { handleSubmit, control, watch } = useForm();
   const pwd = watch("password");
   const [date, setDate] = useState(new Date(""));
   const [estados, setEstados] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [parroquias, setParroquias] = useState([]);
+
+  const isValidDate = (day, month, year) => {
+    const date = new Date(year, month - 1, day);
+    return (
+      date.getFullYear() === parseInt(year, 10) &&
+      date.getMonth() + 1 === parseInt(month, 10) &&
+      date.getDate() === parseInt(day, 10)
+    );
+  };
 
   const dateValidator = (value) => {
     const dateFormatRegex = /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
@@ -32,22 +43,29 @@ const RegisterVoterScreen = () => {
 
     const [day, month, year] = value.split("/");
 
-    // Crear la fecha en la zona horaria local
-    const selectedDate = new Date(`${year}-${month}-${day}T00:00:00`);
-    const offset = -4; // GMT -4 para Venezuela
-    const localTime = selectedDate.getTime();
-    const localOffset = selectedDate.getTimezoneOffset() * 60000;
-    const utc = localTime + localOffset;
-    const caracasTime = new Date(utc + 3600000 * offset);
-
-    // Calcular la fecha mínima para tener al menos 18 años
-    const minDate = new Date();
-    minDate.setFullYear(minDate.getFullYear() - 18);
-
-    if (caracasTime > minDate) {
-      return "Debes tener al menos 18 años para registrarte";
+    if (!isValidDate(day, month, year)) {
+      return "La Fecha de Nacimiento que intenta registrar NO existe";
     }
-    setDate(caracasTime); // Asegúrate de definir la función setDate fuera del alcance de dateValidator o pasa la función como argumento
+
+    // Calcular la fecha mínima para tener al menos 15 años
+    const minDate = new Date();
+    minDate.setFullYear(minDate.getFullYear() - 15);
+
+    // Calcular la fecha máxima para no superar los 110 años
+    const maxDate = new Date();
+    maxDate.setFullYear(maxDate.getFullYear() - 110);
+
+    const selectedDate = new Date(`${year}-${month}-${day}T00:00:00`);
+
+    if (selectedDate > minDate) {
+      return "El votante debe tener al menos 15 años para ser registrado";
+    }
+
+    if (selectedDate < maxDate) {
+      return "La edad máxima permitida para registrarse es de 110 años";
+    }
+
+    setDate(selectedDate); // Asegúrate de definir la función setDate fuera del alcance de dateValidator o pasa la función como argumento
     return true;
   };
 
@@ -134,8 +152,7 @@ const RegisterVoterScreen = () => {
       Alert.alert("VOTANTE REGISTRADO.", "", [{ text: "OK" }]);
       navigation.goBack();
     } catch (error) {
-      //console.log(error.response.data);
-      Alert.alert("USUARIO NO REGISTRADO.", "Error", [{ text: "OK" }]);
+      handleError("ERROR AL REGISTRAR VOTANTE", error);
     }
   };
 
@@ -162,17 +179,19 @@ const RegisterVoterScreen = () => {
           placeholder={"Cédula de Identidad"}
           rules={{
             required: "La cedula es requerida.",
-            minLength: {
-              value: 1,
-              message: "La cedula debe tener maximo 9 caracteres.",
-            },
-            maxLength: {
-              value: 9,
-              message: "La cedula debe tener maximo 32 caracteres.",
-            },
             pattern: {
               value: cedulaRegex,
               message: "Solo se admiten números en este campo.",
+            },
+            min: {
+              value: 100000,
+              message:
+                "La Cédula de Identidad que intenta registrar NO es válida.",
+            },
+            max: {
+              value: 99999999,
+              message:
+                "La Cédula de Identidad que intenta registrar NO es válida.",
             },
           }}
         />
@@ -291,7 +310,7 @@ const RegisterVoterScreen = () => {
             required: "La respuesta es requerida.",
             minLength: {
               value: 4,
-              message: "La respuesta debe tener máximo 50 caracteres.",
+              message: "La respuesta debe tener al menos 4 caracteres.",
             },
             maxLength: {
               value: 50,

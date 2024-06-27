@@ -106,7 +106,7 @@ const RegisteredVoteScreen = () => {
           <Text style={styles.buttonText}>SALIR</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleCapture}>
-          <Text style={styles.buttonText}>COMPARTIR CAP</Text>
+          <Text style={styles.buttonText}>COMPARTIR</Text>
         </TouchableOpacity>
       </View>
     </View>

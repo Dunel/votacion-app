@@ -35,7 +35,11 @@ const RegisterElectionScreen = () => {
   const onCancelRange = () => setShowDatePickerRange(false);
 
   const onConfirmRange = (output) => {
-    console.log(output);
+    const currentDate = new Date();
+    if (new Date(output.startDate) < currentDate || new Date(output.endDate) < currentDate) {
+      Alert.alert("Error de fecha", "Las fechas seleccionadas deben ser posteriores a la fecha actual.");
+      return;
+    }
     setShowDatePickerRange(false);
     setStartDate(output.startDate);
     setEndDate(output.endDate);
@@ -161,13 +165,13 @@ const RegisterElectionScreen = () => {
         </Text>
         <CustomSelect
           control={control}
-          name="active"
+          name="roleElection"
           rules={{ required: "Este campo es requerido." }}
           items={[
-            { label: "Activa", value: "active" },
-            { label: "Inactiva", value: "inactive" },
+            { label: "Normal", value: "normal" },
+            { label: "Especial", value: "especial" },
           ]}
-          placeholder="Estado de la elección"
+          placeholder="Tipo de elección"
         />
         <CustomSelect
           control={control}
@@ -234,7 +238,7 @@ const RegisterElectionScreen = () => {
         )}
       </View>
       <View style={styles.bottomButtons}>
-        <Button title="Atrás" onPress={() => navigation.goBack()} />
+        <Button title="Atrás" color="#FCBE17" onPress={() => navigation.goBack()} />
         <Button title="Siguiente" onPress={handleSubmit(onSubmit)} />
       </View>
     </View>

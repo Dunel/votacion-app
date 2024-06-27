@@ -15,7 +15,7 @@ const HomeScreen = () => {
       setIsLoading(true);
       const response = await axios.get(
         userInfo.role == 2
-          ? `https://node.appcorezulia.lat/api/election/admin`
+          ? `https://node.appcorezulia.lat/api/election/homeadmin`
           : `https://node.appcorezulia.lat/api/election`,
         {
           headers: {
@@ -37,6 +37,7 @@ const HomeScreen = () => {
       item.votes.some((vote) => vote.userCedula == userInfo.cedula);
     const active = item.active == "active" ? true : false;
     const resultActive = new Date(item.endDate) < new Date();
+    const electActive = new Date(item.startDate) < new Date();
     return (
       <View style={styles.electionItem}>
         <View style={styles.electionTitleContainer}>
@@ -58,7 +59,7 @@ const HomeScreen = () => {
           <Button
             title="IR A LA VOTACIÓN"
             color="blue"
-            disabled={!active || userVoted || !active}
+            disabled={!active || userVoted || !electActive}
             onPress={() =>
               navigation.navigate("VotingScreen", { votingId: item.id })
             }

@@ -20,17 +20,13 @@ const ElectionResultsAdminScreen = () => {
   const [candidateWinner, setCandidateWinner] = useState(null);
   const [votesTotal, setVotesTotal] = useState(0);
   const [votesNull, setVotesNull] = useState(0);
-  const [elecInscritos, setElecInscritos] = useState(0);
+  const [elecInscritos, setElecInscritos] = useState([]);
   const [dataCandidates, setDataCandidates] = useState(null);
-
-  useEffect(() => {
-    fetchElections();
-  }, []);
 
   const fetchElectorsCount = async (data) => {
     try {
       const res = await axios.post(
-        `https://node.appcorezulia.lat/api/user/stats/count/`,
+        `https://node.appcorezulia.lat/api/user/stats/count`,
         data,
         {
           headers: {
@@ -39,15 +35,16 @@ const ElectionResultsAdminScreen = () => {
           },
         }
       );
+      //console.log("cantidad: " + res.data)
       setElecInscritos(res.data);
     } catch (error) {
-      console.error("Error contando:", error.response.data);
+      console.error("Error calculando estadisticas:", error.response.data);
     }
   };
 
   const handleSelectElection = async (item) => {
     setSelected(item);
-    fetchElectorsCount({ type: item.type, typeId: item.typeId });
+    fetchElectorsCount({ type: item.type, typeId: item.typeId, roleElection: item.roleElection });
     try {
       const res = await axios.get(
         `https://node.appcorezulia.lat/api/election/results/${item.id}`,
@@ -58,7 +55,7 @@ const ElectionResultsAdminScreen = () => {
           },
         }
       );
-      console.log(item);
+      //console.log(item);
       setDataCandidates(res.data);
       let maxVotes = 0;
       let allVotes = 0;
@@ -134,6 +131,10 @@ const ElectionResultsAdminScreen = () => {
     );
   };
 
+  useEffect(() => {
+    fetchElections();
+  }, []);
+
   const porcentajeVotosEfectuados = (
     (votesTotal / elecInscritos) *
     100
@@ -144,9 +145,22 @@ const ElectionResultsAdminScreen = () => {
         <View style={styles.resultsContainer}>
           <Text style={styles.title}>{selected.title}</Text>
           <Text style={styles.description}>{selected.description}</Text>
-          <Text style={styles.votesTotal}>
-            Electores Inscritos: {elecInscritos}
-          </Text>
+          <View style={styles.containerBook}>
+            <Text style={styles.votesTotal}>
+              Electores Inscritos: {elecInscritos}
+            </Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("ElectorsScreen", {
+                  type: selected.type,
+                  typeId: selected.typeId,
+                  roleElection: selected.roleElection
+                })
+              }
+            >
+              <Text style={styles.bookTouch}>📖</Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.votesTotal}>Votos Efectuados: {votesTotal}</Text>
           <Text style={styles.votesTotal}>Votos Nulos: {votesNull}</Text>
           <Text style={styles.votesTotal}>
@@ -202,7 +216,7 @@ const styles = StyleSheet.create({
   },
   resultsContainer: {
     flex: 2,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   title: {
     fontSize: 24,
@@ -217,6 +231,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     fontWeight: "bold",
+  },
+  bookTouch: {
+    fontSize: 30,
+    marginBottom: 5,
+    fontWeight: "bold",
+    marginLeft: 20,
+  },
+  containerBook: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   candidateItem: {
     flexDirection: "row",

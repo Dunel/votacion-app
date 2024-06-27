@@ -20,6 +20,10 @@ const AdminScreen = () => {
     navigation.navigate("ElectionResultsAdminScreen");
   };
 
+  const handleSecurity = () => {
+    navigation.navigate("LogsScreen");
+  }
+
   const handleRegistrarEleccion = () => {
     navigation.navigate("RegisterElectionScreen");
   };
@@ -56,6 +60,13 @@ const AdminScreen = () => {
           <Button
             title="Ver elecciones en tiempo real"
             onPress={handleElectionsResults}
+          />
+        </View>
+        <Text style={styles.title}>Menú de Seguridad</Text>
+        <View style={styles.option}>
+          <Button
+            title="AJUSTES IMPORTANTES"
+            onPress={handleSecurity}
           />
         </View>
       </View>

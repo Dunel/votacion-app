@@ -24,7 +24,6 @@ const PostulationsRegisterScreen = () => {
   const { electionId } = route.params;
   const [data, setData] = useState([]);
   const [selected, setSelected] = useState(false);
-  const [showExitConfirmation, setShowExitConfirmation] = useState(false);
   const { userInfo, logout } = useContext(AuthContext);
 
   const fetchData = async () => {

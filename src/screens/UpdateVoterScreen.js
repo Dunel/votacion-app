@@ -15,30 +15,75 @@ import { AuthContext } from "../context/AuthContext";
 import CustomSelect from "../components/customSelect";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import CustomInputNat from "../components/customInputNat";
+import { useErrorHandling } from "../hooks/useErrorHandling";
 
 const passwordRegex =
   /^(?=.*[A-Z])(?=.*\d)(?=.*[@#$%&*./=\\])[A-Za-z\d@#$%&*./=\\]{8,}$/;
 
-const UpdateVoterScreen = () => {
-  const { handleSubmit, control, setValue, watch } = useForm();
-  const navigation = useNavigation();
-  const route = useRoute();
-  const { userInfo } = useContext(AuthContext);
-  const { cedula } = route.params;
-  const [date, setDate] = useState(new Date(""));
-  const [estados, setEstados] = useState([]);
-  const [municipios, setMunicipios] = useState([]);
-  const [parroquias, setParroquias] = useState([]);
-  const [showInputs, setShowInputs] = useState(false);
-  const pwd = watch("password");
+  const UpdateVoterScreen = () => {
+    const { handleSubmit, control, setValue, watch } = useForm();
+    const { handleError } = useErrorHandling();
+    const navigation = useNavigation();
+    const route = useRoute();
+    const { userInfo } = useContext(AuthContext);
+    const { cedula } = route.params;
+    const [date, setDate] = useState(new Date(""));
+    const [estados, setEstados] = useState([]);
+    const [municipios, setMunicipios] = useState([]);
+    const [parroquias, setParroquias] = useState([]);
+    const pwd = watch("password");
+    
+    const formattedDate = (date) => {
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
 
-  const formattedDate = (date) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
+    const isValidDate = (day, month, year) => {
+      const date = new Date(year, month - 1, day);
+      return (
+        date.getFullYear() === parseInt(year, 10) &&
+        date.getMonth() + 1 === parseInt(month, 10) &&
+        date.getDate() === parseInt(day, 10)
+      );
+    };
+    
+    const dateValidator = (value) => {
+      const dateFormatRegex = /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+  
+      if (!value.match(dateFormatRegex)) {
+        return "Ingrese una fecha válida en el formato DD/MM/YYYY";
+      }
+  
+      const [day, month, year] = value.split("/");
+  
+      if (!isValidDate(day, month, year)) {
+        return "La Fecha de Nacimiento que intenta registrar NO existe";
+      }
+  
+      // Calcular la fecha mínima para tener al menos 15 años
+      const minDate = new Date();
+      minDate.setFullYear(minDate.getFullYear() - 15);
+  
+      // Calcular la fecha máxima para no superar los 110 años
+      const maxDate = new Date();
+      maxDate.setFullYear(maxDate.getFullYear() - 110);
+  
+      const selectedDate = new Date(`${year}-${month}-${day}T00:00:00`);
+  
+      if (selectedDate > minDate) {
+        return "El votante debe tener al menos 15 años para ser registrado";
+      }
+  
+      if (selectedDate < maxDate) {
+        return "La edad máxima permitida para registrarse es de 110 años";
+      }
+  
+      setDate(selectedDate);
+      return true;
+    };
 
   const fetchEstados = async () => {
     try {
@@ -131,34 +176,6 @@ const UpdateVoterScreen = () => {
     }
   };
 
-  const dateValidator = (value) => {
-    const dateFormatRegex = /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-
-    if (!value.match(dateFormatRegex)) {
-      return "Ingrese una fecha válida en el formato DD/MM/YYYY";
-    }
-
-    const [day, month, year] = value.split("/");
-
-    // Crear la fecha en la zona horaria local
-    const selectedDate = new Date(`${year}-${month}-${day}T00:00:00`);
-    const offset = -4; // GMT -4 para Venezuela
-    const localTime = selectedDate.getTime();
-    const localOffset = selectedDate.getTimezoneOffset() * 60000;
-    const utc = localTime + localOffset;
-    const caracasTime = new Date(utc + 3600000 * offset);
-
-    // Calcular la fecha mínima para tener al menos 18 años
-    const minDate = new Date();
-    minDate.setFullYear(minDate.getFullYear() - 18);
-
-    if (caracasTime > minDate) {
-      return "Debes tener al menos 18 años para registrarte";
-    }
-    setDate(caracasTime); 
-    return true;
-  };
-
   const onSubmit = async (data) => {
     try {
       const user = {
@@ -178,10 +195,7 @@ const UpdateVoterScreen = () => {
       Alert.alert("VOTANTE MODIFICADO.", "", [{ text: "OK" }]);
       navigation.goBack();
     } catch (error) {
-      console.log(error.response.data);
-      Alert.alert("ERROR AL MODIFICAR.", "" + error.response.status, [
-        { text: "OK" },
-      ]);
+      handleError("ERROR AL MODIFICAR VOTANTE", error);
     }
   };
 
@@ -293,7 +307,7 @@ const UpdateVoterScreen = () => {
           placeholder={"Confirmar contraseña"}
           secureTextEntry
           rules={{
-            validate: (value) => value === pwd || "Password do not match",
+            validate: (value) => value === pwd || "Las contraseñas no coinciden",
           }}
         />
         <CustomSelect
@@ -318,7 +332,7 @@ const UpdateVoterScreen = () => {
             required: "La respuesta es requerida.",
             minLength: {
               value: 4,
-              message: "La respuesta debe tener máximo 50 caracteres.",
+              message: "La respuesta debe tener al menos 4 caracteres.",
             },
             maxLength: {
               value: 50,

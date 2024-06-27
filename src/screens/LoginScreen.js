@@ -34,7 +34,7 @@ const LoginScreen = () => {
       <Spinner visible={isLoading} />
       <Image
         style={styles.logo}
-        source={require("../../assets/LOGO_APP_2.png")}
+        source={require("../../assets/playstore.png")}
       />
       <CustomSelect
         control={control}
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 200,
-    marginBottom: 10,
+    marginBottom: 20,
   },
   link:{
     marginTop: 10,
