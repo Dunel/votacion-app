@@ -1,10 +1,5 @@
 import React, { useContext, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-} from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { AuthContext } from "../context/AuthContext";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useForm } from "react-hook-form";
@@ -31,6 +26,12 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Link style={styles.topRightLink} to={{ screen: "ManualUsuarioScreen" }}>
+      <Image
+        source={require("../../assets/document.png")}
+        style={styles.topRightImage}
+      />
+      </Link>
       <Spinner visible={isLoading} />
       <Image
         style={styles.logo}
@@ -85,7 +86,9 @@ const LoginScreen = () => {
       />
       {error ? <Text style={styles.error}>{error}</Text> : null}
       <CustomButton text="Iniciar Sesión" onPress={handleSubmit(onSubmit)} />
-      <Link style={styles.link} to={{ screen: "RecoveryScreen" }}>Recuperar Contraseña</Link>
+      <Link style={styles.link} to={{ screen: "RecoveryScreen" }}>
+        Recuperar Contraseña
+      </Link>
     </View>
   );
 };
@@ -127,10 +130,24 @@ const styles = StyleSheet.create({
     height: 200,
     marginBottom: 20,
   },
-  link:{
+  link: {
     marginTop: 10,
     color: "blue",
-  }
+  },
+  topRightImage: {
+    position: "absolute",
+    right: 10, 
+    top: 10, 
+    width: 45, 
+    height: 45, 
+  },
+  topRightLink: {
+    position: "absolute",
+    right: 10, 
+    top: 10,
+    width: 45, 
+    height: 65, 
+  },
 });
 
 export default LoginScreen;

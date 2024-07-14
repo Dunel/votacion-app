@@ -33,8 +33,8 @@ const HomeScreen = () => {
 
   const renderElectionItem = ({ item }) => {
     const userVoted =
-      item.votes &&
-      item.votes.some((vote) => vote.userCedula == userInfo.cedula);
+      item.userVotes &&
+      item.userVotes.some((vote) => vote.userCedula == userInfo.cedula);
     const active = item.active == "active" ? true : false;
     const resultActive = new Date(item.endDate) < new Date();
     const electActive = new Date(item.startDate) < new Date();

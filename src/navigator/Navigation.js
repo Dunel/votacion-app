@@ -22,6 +22,7 @@ import ElectionResultsAdminScreen from "../screens/ElectionResultsAdminScreen";
 import LogoTitle from "../components/logoTitle";
 import ElectorsScreen from "../screens/electorsScreen";
 import LogsScreen from "../screens/LogsScreen";
+import ManualUsarioScreen from "../screens/ManualUsuarioScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -285,6 +286,17 @@ const Navigation = () => {
                 },
               }}
             />
+            <Stack.Screen
+                name="ManualUsuarioScreen"
+                component={ManualUsarioScreen}
+                options={{
+                  title: "MANUAL DE USUARIO",
+                  headerTitleStyle: {
+                    fontWeight: "bold",
+                    fontSize: 15,
+                  },
+                }}
+              />
           </>
         )}
       </Stack.Navigator>
